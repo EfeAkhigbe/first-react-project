@@ -4,14 +4,18 @@ import Header from "./Header";
 import "./index.css";
 import Main from "./Main";
 import Footer from "./footer";
+import { Provider } from "react-redux";
+import store from "./store/";
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-      <Main />
-      <Footer />
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Header />
+        <Main />
+        <Footer />
+      </div>
+    </Provider>
   );
 }
 

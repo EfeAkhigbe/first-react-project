@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import Card from "./Card";
 import CssIcon from "./CssIcon.js";
 import { useMediaQuery } from "react-responsive";
+import { getPosts } from "./action/posts";
 
-const Main = () => {
+const Main = (props) => {
   const isScreenWide = useMediaQuery({
     query: "(min-width: 769px)",
   });
@@ -19,6 +21,12 @@ const Main = () => {
       flex: "1 1 0",
     };
   }
+
+  useEffect(() => {
+    if (!props.posts) props.getPosts();
+  }, []);
+
+  console.log(props.posts);
 
   return (
     <div className="main">
@@ -44,14 +52,20 @@ const Main = () => {
 
           <div style={cardzz} className="cards">
             <div style={cardz}>
-              <Card
-                img={<CssIcon />}
-                topic="No custom CSS"
-                text="Tailwind's advanced class extraction will leave your project free of custom CSS. You don't have to worry at all."
-              />
+              {props.posts &&
+                props.posts
+                  .slice(0, 3)
+                  .map((post, i) => (
+                    <Card
+                      key={post.id}
+                      img={<CssIcon />}
+                      topic={post.title}
+                      text={post.body}
+                    />
+                  ))}
             </div>
 
-            <div style={cardz}>
+            {/* <div style={cardz}>
               <Card
                 img={<CssIcon />}
                 topic="Developer Experience"
@@ -65,7 +79,7 @@ const Main = () => {
                 topic="Mobile Friendly"
                 text="Modern applications demand mobile-friendly and Tailwind's responsive modifiers make it easy."
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -73,4 +87,8 @@ const Main = () => {
   );
 };
 
-export default Main;
+const mapStateToProps = (state) => ({
+  posts: state.postReducer.posts,
+});
+
+export default connect(mapStateToProps, { getPosts })(Main);
