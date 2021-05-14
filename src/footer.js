@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
 import { useMediaQuery } from "react-responsive";
+import { newPost } from "./action/posts";
 
-function Footer() {
+function Footer(props) {
   const isScreenlarge = useMediaQuery({
     query: "(min-width: 769px)",
   });
@@ -36,6 +38,25 @@ function Footer() {
     };
   }
 
+  const [data, setData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    title: "",
+  });
+
+  const handleInput = (ev) => {
+    const input = {
+      ...data,
+      [ev.target.name]: ev.target.value,
+    };
+    setData(input);
+  };
+
+  const handleButton = () => {
+    props.newPost(data);
+  };
+
   return (
     <div className="footer">
       <h3 className="footer__text">Sign up to download the free PDF</h3>
@@ -45,15 +66,17 @@ function Footer() {
           <input
             style={input1}
             type="text"
-            name="First name"
+            name="firstName"
             placeholder="First name"
+            onChange={handleInput}
           />
 
           <input
             style={input}
             type="text"
-            name="Last name"
+            name="lastName"
             placeholder="Last name"
+            onChange={handleInput}
           />
         </div>
 
@@ -61,8 +84,9 @@ function Footer() {
           <input
             style={input1}
             type="email"
-            name="Email"
+            name="email"
             placeholder="john@email.com"
+            onChange={handleInput}
           />
 
           <input
@@ -70,11 +94,12 @@ function Footer() {
             type="text"
             name="title"
             placeholder="Your title"
+            onChange={handleInput}
           />
         </div>
       </div>
 
-      <button style={btn} className="footer__button">
+      <button style={btn} className="footer__button" onClick={handleButton}>
         Create account
       </button>
 
@@ -83,4 +108,8 @@ function Footer() {
   );
 }
 
-export default Footer;
+const mapStateToProps = (state) => ({
+  newPost: state.postReducer.newPost,
+});
+
+export default connect(mapStateToProps, { newPost })(Footer);
